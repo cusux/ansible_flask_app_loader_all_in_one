@@ -8,4 +8,7 @@
 - name: Import the LB tier
   import_playbook: provision_load_balancer_tier.yml
 
+- name: Import end-to-end smoketests
+  import_playbook: smoketests.yml
+
 ...
