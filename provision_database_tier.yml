@@ -1,8 +1,8 @@
 ---
 - name: Deploy, configure, and populate Postgres 10
   hosts: database_servers
-  become: true
-  gather_facts: false
+  become: True
+  gather_facts: False
   tags:
     - database_servers
   tasks:
@@ -22,14 +22,14 @@
         path: "{{ postgres_10_data_dir }}/PG_VERSION"
       register: r_postgres_init_dir_state
 
-    - when: not r_postgres_init_dir_state.stat.exists
-      name: Run Postgres initdb to initialize if postgres not initialized
+    - name: Run Postgres initdb to initialize if postgres not initialized
       command: "{{ postgres_10_bin_path }}/postgresql-10-setup initdb"
       notify: restart_postgres
+      when: not r_postgres_init_dir_state.stat.exists
 
     - name: Setup Postgres for remote password auth
       template:
-        src: pg_hba.conf.j2
+        src: templates/pg_hba.conf.j2
         dest: "{{ postgres_10_data_dir }}/pg_hba.conf"
       notify: restart_postgres
 
@@ -44,9 +44,10 @@
       service:
         name: "{{ postgres_service }}"
         state: "{{ postgres_service_state | default('started') }}"
-        enabled: "{{ postgres_service_enabled | default(true) }}"
+        enabled: "{{ postgres_service_enabled | default(True) }}"
 
     - name: Configure Postgres resources, user, database etc 
+      become_user: "{{ postgres_user }}"
       block:
         - name: Setup Postgres database(s) 
           postgresql_db:
@@ -56,11 +57,11 @@
           loop_control:
             loop_var: __database
 
-        - name: Create Postgres user#(s) 
+        - name: Create Postgres user(s) 
           postgresql_user:
             name: "{{ __user.name }}"
             password: "{{ __user.password | default(omit) }}"
-            encrypted: true # "{{ __user.encrypted | default(omit) }}"
+            encrypted: True # "{{ __user.encrypted | default(omit) }}"
             priv: "{{ __user.priv | default(omit) }}"
             db: "{{ __user.database | default(omit) }}"
             # role_attr_flags: "{{ __user.role_attr_flags | default(omit) }}"
@@ -68,8 +69,8 @@
           loop: "{{ postgres_users }}"
           loop_control:
             loop_var: __user
-          no_log: "{{ postgres_user_no_log_state | default(false) }}" 
-      become_user: "{{ postgres_user }}"
+          no_log: "{{ postgres_user_no_log_state | default(False) }}" 
+
   handlers:
     - name: restart_postgres
       service:

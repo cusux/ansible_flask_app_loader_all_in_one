@@ -1,8 +1,8 @@
 ---
 - name: Deploy, configure, and populate flask repo and virtualenv
   hosts: app_servers
-  become: true
-  gather_facts: false
+  become: True
+  gather_facts: False
   tags:
     - application_servers
     - flask
@@ -51,22 +51,22 @@
       tags:
         - venv
         - virtualenv  
-          
+
     - name: Initialize flask app database resources
       command: "{{ virtualenv_home }}/{{ flask_app_name }}/bin/python3 {{ flask_home }}/{{ flask_app_name }}/config.py"
-      run_once: true
+      run_once: True
 
     - name: "Generate {{ flask_app_name }} startup script"    
       template:
-        src: launch_resource_hub.j2
+        src: templates/launch_resource_hub.j2
         dest: /usr/local/bin/launch_resource_hub   
-        mode: '0555'
+        mode: 0555
 
     - name: template systemd service config
       template:
-        src: flask_service.j2
+        src: templates/flask_service.j2
         dest: /etc/systemd/system/{{ flask_app_name }}.service
-        mode: '0755'
+        mode: 0755
 
     - name: start systemd app service
       systemd: 

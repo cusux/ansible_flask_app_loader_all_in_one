@@ -1,8 +1,8 @@
 ---
 - name: Deploy haproxy load balancer
   hosts: load_balancers
-  gather_facts: false 
-  become: true
+  gather_facts: False 
+  become: True
   tags:
     - load_balancers
   tasks:
@@ -13,7 +13,7 @@
 
     - name: Configure haproxy load balancing
       template:
-        src: haproxy.cfg.j2
+        src: templates/haproxy.cfg.j2
         dest: /etc/haproxy/haproxy.cfg
       notify: restart_haproxy
 
@@ -21,7 +21,7 @@
       service:
         name: haproxy
         state: started
-        enabled: true
+        enabled: True
   handlers:
     - name: restart_haproxy
       service:
@@ -30,8 +30,8 @@
 
 - name: End to end smoke tests
   hosts: app_servers:database_servers
-  gather_facts: true
-  become: true
+  gather_facts: True
+  become: True
   tags:
     - smoketest
   tasks:
@@ -49,8 +49,8 @@
 
 - name: End to end smoke tests
   hosts: app_servers
-  become: false
-  gather_facts: false
+  become: False
+  gather_facts: False
   tags:
     - smoketest
   tasks:
