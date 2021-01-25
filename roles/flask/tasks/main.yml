@@ -2,13 +2,13 @@
 - name: Create flask user
   user:
     name: "{{ flask_user }}"
-    state: present  
+    state: present
 
 - name: Install flask packages
   package:
     name: "{{ __package }}"
     state: present
-  loop: "{{ app_yum_packages }}"        
+  loop: "{{ app_yum_packages }}"
   loop_control:
     loop_var: __package
 
@@ -21,7 +21,7 @@
   tags:
     - git
 
-- name: "Change flash repo owner to {{ flask_user }} recursively"      
+- name: "Change flash repo owner to {{ flask_user }} recursively"
   file: 
     dest: "{{ flask_home }}/{{ flask_app_name }}"
     owner: "{{ flask_user }}"
@@ -51,7 +51,7 @@
 - name: "Generate {{ flask_app_name }} startup script"
   template:
     src: launch_resource_hub.j2
-    dest: /usr/local/bin/launch_resource_hub   
+    dest: /usr/local/bin/launch_resource_hub
     mode: 0555
 
 - name: "Generate {{ flask_app_name }} service daemon file"

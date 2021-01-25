@@ -1,7 +1,7 @@
 ---
 - name: Deploy haproxy load balancer
   hosts: load_balancers
-  gather_facts: False 
+  gather_facts: False
   become: True
   tags:
     - load_balancers
