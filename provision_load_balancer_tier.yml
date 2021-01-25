@@ -3,14 +3,8 @@
   hosts: load_balancers
   gather_facts: false 
   become: true
-
-  vars:
-    load_balancer_packages:
-      - haproxy
-
   tags:
     - load_balancers
-
   tasks:
     - name: Install load balancer packages
       package:
@@ -28,7 +22,6 @@
         name: haproxy
         state: started
         enabled: true
-
   handlers:
     - name: restart_haproxy
       service:
