@@ -1,0 +1,8 @@
+---
+- name: Dynamically generate in-memory inventory from OpenStack
+  import_playbook: inmem_hosts.yml
+
+- name: Setup the multi-tier app
+  import_playbook: site.yml
+
+...
