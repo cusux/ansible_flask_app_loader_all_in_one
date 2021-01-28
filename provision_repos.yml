@@ -1,0 +1,16 @@
+---
+- name: Setup Repos
+  hosts: app_servers:load_balancers:database_servers
+  gather_facts: False
+  become: True
+  tags:
+    - common
+    - deploy_repos
+
+  tasks:
+    - name: Copy repo file
+      copy:
+        src: three-tier-app.repo
+        dest: /etc/yum.repos.d/open_three-tier-app.repo
+
+...

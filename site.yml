@@ -1,4 +1,7 @@
 ---
+- name: Import the repositories
+  import_playbook: provision_repos.yml
+
 - name: Import the DB tier
   import_playbook: provision_database_tier.yml
 
