@@ -1,0 +1,41 @@
+---
+- name: Create in-memory inventory from OpenStack
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+    - name: Gather instance info
+      os_server_facts:
+        cloud: openstack
+        region_name: regionOne
+      register: __openstack_instances
+
+      # - name: Print filtered output
+      #   debug:
+      #     msg: "{{ item.0 }} and {{ item.1 }} and {{ item.2  }}"
+      #   with_together: 
+      #     - "{{ __openstack_instances.ansible_facts.openstack_servers | map(attribute='public_v4') | list }}"
+      #     - "{{ __openstack_instances.ansible_facts.openstack_servers | map(attribute='metadata.deployment_name') | list }}"
+      #     - "{{ __openstack_instances.ansible_facts.openstack_servers | map(attribute='metadata.group') | list }}"
+
+    - name: Add each gathered instance as host
+      add_host:
+        name: "{{ item.public_v4 }}"
+        group:
+          - "{{ item.metadata.group }}"
+          - "{{ item.metadata.deployment_name }}"
+      loop: "{{ __openstack_instances.ansible_facts.openstack_servers }}"
+
+      # - name: View the in-memory inventory groups
+      #   debug:
+      #     var: groups
+
+- name: Test the in-memory inventory
+  hosts: all:!localhost
+  gather_facts: False
+
+  tasks:
+    - name: Wait on instances for connectivity
+      wait_for_connection:
+
+...
